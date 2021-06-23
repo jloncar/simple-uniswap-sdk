@@ -1,34 +1,34 @@
-import BigNumber from 'bignumber.js';
-import { Subject } from 'rxjs';
+import BigNumber from "bignumber.js";
+import { Subject } from "rxjs";
 import {
   ExactInputSingleRequest,
   ExactOutputSingleRequest,
-} from '../../ABI/types/uniswap-router-v3';
-import { Constants } from '../../common/constants';
-import { ErrorCodes } from '../../common/errors/error-codes';
-import { UniswapError } from '../../common/errors/uniswap-error';
-import { hexlify } from '../../common/utils/hexlify';
-import { parseEther } from '../../common/utils/parse-ether';
-import { toEthersBigNumber } from '../../common/utils/to-ethers-big-number';
-import { getTradePath } from '../../common/utils/trade-path';
-import { TradePath } from '../../enums/trade-path';
-import { UniswapVersion } from '../../enums/uniswap-version';
-import { UniswapContractContextV2 } from '../../uniswap-contract-context/uniswap-contract-context-v2';
-import { UniswapContractContextV3 } from '../../uniswap-contract-context/uniswap-contract-context-v3';
-import { AllPossibleRoutes } from '../router/models/all-possible-routes';
-import { BestRouteQuotes } from '../router/models/best-route-quotes';
-import { RouteQuote } from '../router/models/route-quote';
-import { UniswapRouterFactory } from '../router/uniswap-router.factory';
-import { UniswapRouterContractFactoryV2 } from '../router/v2/uniswap-router-contract.factory.v2';
-import { percentToFeeAmount } from '../router/v3/enums/fee-amount-v3';
-import { UniswapRouterContractFactoryV3 } from '../router/v3/uniswap-router-contract.factory.v3';
-import { AllowanceAndBalanceOf } from '../token/models/allowance-balance-of';
-import { Token } from '../token/models/token';
-import { TokenFactory } from '../token/token.factory';
-import { TradeContext } from './models/trade-context';
-import { TradeDirection } from './models/trade-direction';
-import { Transaction } from './models/transaction';
-import { UniswapPairFactoryContext } from './models/uniswap-pair-factory-context';
+} from "../../ABI/types/uniswap-router-v3";
+import { Constants } from "../../common/constants";
+import { ErrorCodes } from "../../common/errors/error-codes";
+import { UniswapError } from "../../common/errors/uniswap-error";
+import { hexlify } from "../../common/utils/hexlify";
+import { parseEther } from "../../common/utils/parse-ether";
+import { toEthersBigNumber } from "../../common/utils/to-ethers-big-number";
+import { getTradePath } from "../../common/utils/trade-path";
+import { TradePath } from "../../enums/trade-path";
+import { UniswapVersion } from "../../enums/uniswap-version";
+import { UniswapContractContextV2 } from "../../uniswap-contract-context/uniswap-contract-context-v2";
+import { UniswapContractContextV3 } from "../../uniswap-contract-context/uniswap-contract-context-v3";
+import { AllPossibleRoutes } from "../router/models/all-possible-routes";
+import { BestRouteQuotes } from "../router/models/best-route-quotes";
+import { RouteQuote } from "../router/models/route-quote";
+import { UniswapRouterFactory } from "../router/uniswap-router.factory";
+import { UniswapRouterContractFactoryV2 } from "../router/v2/uniswap-router-contract.factory.v2";
+import { percentToFeeAmount } from "../router/v3/enums/fee-amount-v3";
+import { UniswapRouterContractFactoryV3 } from "../router/v3/uniswap-router-contract.factory.v3";
+import { AllowanceAndBalanceOf } from "../token/models/allowance-balance-of";
+import { Token } from "../token/models/token";
+import { TokenFactory } from "../token/token.factory";
+import { TradeContext } from "./models/trade-context";
+import { TradeDirection } from "./models/trade-direction";
+import { Transaction } from "./models/transaction";
+import { UniswapPairFactoryContext } from "./models/uniswap-pair-factory-context";
 
 export class UniswapPairFactory {
   private _fromTokenFactory = new TokenFactory(
@@ -355,7 +355,7 @@ export class UniswapPairFactory {
    */
   public async allowance(uniswapVersion: UniswapVersion): Promise<string> {
     if (this.tradePath() === TradePath.ethToErc20) {
-      return '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+      return "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
     }
 
     const allowance = await this._fromTokenFactory.allowance(
@@ -376,7 +376,7 @@ export class UniswapPairFactory {
   ): Promise<Transaction> {
     if (this.tradePath() === TradePath.ethToErc20) {
       throw new UniswapError(
-        'You do not need to generate approve uniswap allowance when doing eth > erc20',
+        "You do not need to generate approve uniswap allowance when doing eth > erc20",
         ErrorCodes.generateApproveMaxAllowanceDataNotAllowed
       );
     }
@@ -385,7 +385,7 @@ export class UniswapPairFactory {
       uniswapVersion === UniswapVersion.v2
         ? UniswapContractContextV2.routerAddress
         : UniswapContractContextV3.routerAddress,
-      '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+      "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
     );
 
     return {
@@ -768,7 +768,7 @@ export class UniswapPairFactory {
         );
       default:
         throw new UniswapError(
-          'Uniswap version not supported',
+          "Uniswap version not supported",
           ErrorCodes.uniswapVersionNotSupported
         );
     }
@@ -808,7 +808,7 @@ export class UniswapPairFactory {
         );
       default:
         throw new UniswapError(
-          'Uniswap version not supported',
+          "Uniswap version not supported",
           ErrorCodes.uniswapVersionNotSupported
         );
     }
@@ -834,7 +834,7 @@ export class UniswapPairFactory {
 
     switch (routeQuote.uniswapVersion) {
       case UniswapVersion.v2:
-        return this._uniswapRouterContractFactoryV2.swapExactTokensForETH(
+        return this._uniswapRouterContractFactoryV2.swapExactTokensForETHSupportingFeeOnTransferTokens(
           hexlify(amountIn),
           hexlify(parseEther(ethAmountOutMin)),
           routeQuote.routePathArray,
@@ -850,7 +850,7 @@ export class UniswapPairFactory {
         );
       default:
         throw new UniswapError(
-          'Uniswap version not supported',
+          "Uniswap version not supported",
           ErrorCodes.uniswapVersionNotSupported
         );
     }
@@ -892,7 +892,7 @@ export class UniswapPairFactory {
         );
       default:
         throw new UniswapError(
-          'Uniswap version not supported',
+          "Uniswap version not supported",
           ErrorCodes.uniswapVersionNotSupported
         );
     }
@@ -937,7 +937,7 @@ export class UniswapPairFactory {
         );
       default:
         throw new UniswapError(
-          'Uniswap version not supported',
+          "Uniswap version not supported",
           ErrorCodes.uniswapVersionNotSupported
         );
     }
@@ -983,7 +983,7 @@ export class UniswapPairFactory {
         );
       default:
         throw new UniswapError(
-          'Uniswap version not supported',
+          "Uniswap version not supported",
           ErrorCodes.uniswapVersionNotSupported
         );
     }
